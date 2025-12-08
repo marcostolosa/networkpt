@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛡️ NetworkPT - Enhanced Multi-Scan Platform by Ravi Solanki</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
+    <meta name="description" content="NetworkPT - Professional penetration testing platform with multiple scan support">
+    <meta name="author" content="Ravi Solanki">
+</head>
+<body data-color-scheme="light">
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-container">
+        <div class="login-box">
+            <h1>🛡️ NetworkPT</h1>
+            <p style="margin-bottom: 2rem; color: #666; font-size: 0.95rem;">
+                <strong>by Ravi Solanki</strong><br>
+                Enhanced Multi-Scan Penetration Testing Platform
+            </p>
+            <form onsubmit="login(event)" id="loginForm">
+                <div class="input-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required placeholder="Enter your username" autocomplete="username">
+                </div>
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required placeholder="Enter your password" autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn" style="width: 100%; margin-top: 1rem;">
+                    🔐 Login to NetworkPT
+                </button>
+            </form>
+            <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #eee; font-size: 0.85rem; color: #888;">
+                <p><strong>Copyright © 2025 Ravi Solanki. All Rights Reserved.</strong></p>
+                
+                    
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div id="dashboard" class="dashboard">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1>🛡️ NetworkPT <span style="font-size: 0.7em; opacity: 0.8;">by Ravi Solanki</span></h1>
+                <span style="font-size: 0.7em; opacity: 0.7;">Enhanced Multi-Scan Platform</span>
+            </div>
+            <div class="header-right">
+                <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+                    <span id="themeIcon">🌙</span>
+                </button>
+                <span id="userInfo" class="user-info">👤 User</span>
+                <button class="btn btn-secondary" onclick="logout()">🚪 Logout</button>
+            </div>
+        </header>
+
+        <!-- Main Content Container -->
+        <main class="main-content">
+            <!-- Dashboard View with Live Status -->
+            <div id="dashboardView">
+                <div class="dashboard-header" style="margin-bottom: 2rem;">
+                    <h2 class="headline">📊 Project Dashboard</h2>
+                    <p class="subheadline">
+                        Manage your penetration testing projects with live scan status monitoring
+                    </p>
+                </div>
+
+                <div class="action-group" style="justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                    <button class="btn btn-success" onclick="showCreateProject()">
+                        ➕ Create New Project
+                    </button>
+                    <div style="display: flex; gap: 1rem;">
+                        <button class="btn btn-secondary" onclick="loadProjects()">
+                            🔄 Refresh Projects
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                        📁 Your Projects with Live Status
+                        <span id="projectCount" class="status-badge status-info">0 projects</span>
+                    </h3>
+                    <div id="projectsList">
+                        <div class="empty-state">
+                            <h3>🔄 Loading projects...</h3>
+                            <p>Please wait while we fetch your project data with live scan information.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project View -->
+            <div id="projectView" class="project-view" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                    <h2 id="projectTitle" style="font-size: 1.8rem; font-weight: 700;">
+                        🎯 Project: Loading...
+                    </h2>
+                    <div class="action-group">
+                        <button class="btn btn-secondary" onclick="showDashboard()">
+                            ⬅️ Back to Dashboard
+                        </button>
+                        <button class="btn btn-danger" onclick="deleteCurrentProject()">
+                            🗑️ Delete Project
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Enhanced Tabs -->
+                <div class="tabs" id="projectTabs">
+                    <button class="tab active" data-tab="targets" onclick="showTab('targets')">📍 Target Management</button>
+                    <button class="tab" data-tab="scans" onclick="showTab('scans')">🚀 Scan Controls</button>
+                    <button class="tab" data-tab="results" onclick="showTab('results')">📊 Live Results</button>
+                    <button class="tab" data-tab="export" onclick="showTab('export')">💾 Export Data</button>
+                   <button class="tab" data-tab="copy" onclick="showTab('copy')">📁 Copy All Results</button>
+                </div>
+
+                <!-- Target Management Tab -->
+                <div id="targetsTab" class="tab-content active">
+                    <div class="card">
+                        <h3 style="margin-bottom: 1.5rem;">📍 Target Configuration</h3>
+                        <div class="input-group">
+                            <label for="targetsInput">
+                                Target List
+                                <span style="font-size: 0.8rem; color: #666; font-weight: normal;">
+                                    (Enter IPs, domains - one per line)
+                                </span>
+                            </label>
+                            <textarea id="targetsInput" placeholder="192.168.1.1&#10;example.com&#10;target.example.org"></textarea>
+                            <div id="targetsStatus" class="status-badge status-error">No targets defined</div>
+                        </div>
+                        <div class="action-group">
+                            <button class="btn btn-success" onclick="saveTargets()">
+                                💾 Save Targets
+                            </button>
+                            <button class="btn btn-secondary" onclick="loadTargets()">
+                                🔄 Reload Targets
+                            </button>
+                        </div>
+                        <div class="export-note">
+                            💡 <strong>Tip:</strong> Supported formats include IPv4 addresses, domain.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scan Controls Tab -->
+                <div id="scansTab" class="tab-content">
+                    <div class="card" style="margin-bottom: 2rem;">
+                        <h3 style="margin-bottom: 1rem;">⚡ Quick Actions</h3>
+                        <div class="action-group">
+                            <button class="btn btn-success" onclick="startAllScans()">🚀 Start All Scans</button>
+
+                        </div>
+                        <div class="export-note" style="margin-top: 1rem;">
+                            💡 <strong>Multi-Scan Feature:</strong> Each time you start a scan, it creates a new numbered instance. 
+                            Previous scans are preserved and accessible separately.
+                        </div>
+                    </div>
+
+                    <div class="scan-controls">
+                        <!-- SSH Audit Tool -->
+                        <div class="scan-tool">
+                            <h4>🔑 SSH Security Audit</h4>
+                            <p>Comprehensive SSH configuration and security analysis</p>
+                            <button class="btn" onclick="startScan('ssh_audit')">Start SSH Audit</button>
+                        </div>
+
+                        <!-- Nmap Selective Port Scan -->
+                        <div class="scan-tool">
+                            <h4>🔍 Nmap Selective Scan</h4>
+                            <p>Targeted port scanning for common services</p>
+                            <button class="btn" onclick="startScan('nmap_selective_port')">Start Selective Scan</button>
+                        </div>
+
+                        <!-- Nmap Default Scan -->
+                        <div class="scan-tool">
+                            <h4>🔍 Nmap Default Scan</h4>
+                            <p>Standard network discovery and service enumeration</p>
+                            <button class="btn" onclick="startScan('nmap_default_scan')">Start Default Scan</button>
+                        </div>
+
+                        <!-- Nuclei Vulnerability Scan -->
+                        <div class="scan-tool">
+                            <h4>⚡ Nuclei Vuln Scanner</h4>
+                            <p>Fast vulnerability detection using community templates</p>
+                            <button class="btn" onclick="startScan('nuclei')">Start Nuclei Scan</button>
+                        </div>
+
+                        <!-- TestSSL Analysis -->
+                        <div class="scan-tool">
+                            <h4>🔒 TestSSL Analysis</h4>
+                            <p>Comprehensive SSL/TLS security assessment</p>
+                            <button class="btn" onclick="startScan('testssl')">Start SSL Test</button>
+                        </div>
+
+                        <!-- SSLScan -->
+                        <div class="scan-tool">
+                            <h4>🔐 SSLScan Analysis</h4>
+                            <p>Detailed SSL/TLS cipher and protocol analysis</p>
+                            <button class="btn" onclick="startScan('sslscan')">Start SSLScan</button>
+                        </div>
+
+                        <!-- Nikto Web Scanner -->
+                        <div class="scan-tool">
+                            <h4>🕷️ Nikto Web Scanner</h4>
+                            <p>Web server vulnerability and misconfiguration detection</p>
+                            <button class="btn" onclick="startScan('nikto')">Start Web Scan</button>
+                        </div>
+
+                        <!-- Directory Search -->
+                        <div class="scan-tool">
+                            <h4>📂 Directory Discovery</h4>
+                            <p>Hidden directory and file enumeration</p>
+                            <button class="btn" onclick="startScan('dirsearch')">Start Dir Search</button>
+                        </div>
+
+                        <!-- HTTPx -->
+                        <div class="scan-tool">
+                            <h4>🌐 HTTPx Service Detection</h4>
+                            <p>Fast HTTP service discovery and analysis</p>
+                            <button class="btn" onclick="startScan('httpx')">Start HTTPx Scan</button>
+                        </div>
+
+                        <!-- UDP Protocol Scanner -->
+                        <div class="scan-tool">
+                            <h4>📡 UDP Protocol Scan</h4>
+                            <p>UDP service discovery and enumeration</p>
+                            <button class="btn" onclick="startScan('udp_proto_scan')">Start UDP Scan</button>
+                        </div>
+
+                        <!-- Cloud Enumeration -->
+                        <div class="scan-tool">
+                            <h4>☁️ Cloud Asset Discovery</h4>
+                            <p>Cloud resource and service enumeration</p>
+                            <button class="btn" onclick="startScan('cloud_enum')">Start Cloud Enum</button>
+                        </div>
+
+                        <!-- Nmap Full TCP -->
+                        <div class="scan-tool">
+                            <h4>🔍 Nmap Full TCP Scan</h4>
+                            <p>Comprehensive TCP port scanning (all 65535 ports)</p>
+                            <button class="btn" onclick="startScan('nmap_full_tcp')">Start Full TCP</button>
+                        </div>
+
+                        <!-- Aquatone -->
+                        <div class="scan-tool">
+                            <h4>🌊 Aquatone Reconnaissance</h4>
+                            <p>Visual domain reconnaissance and screenshots</p>
+                            <button class="btn" onclick="startScan('aquatone')">Start Aquatone</button>
+                        </div>
+
+                        <!-- EyeWitness -->
+                        <div class="scan-tool">
+                            <h4>👁️ EyeWitness Screenshots</h4>
+                            <p>Web application screenshot and analysis tool</p>
+                            <button class="btn" onclick="startScan('eyewitness')">Start EyeWitness</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enhanced Live Results Tab -->
+                <div id="resultsTab" class="tab-content">
+                        <button class="btn btn-warning" onclick="pauseAllScans()">⏸️ Pause All</button>
+                        <button class="btn btn-primary" onclick="resumeAllScans()">▶️ Resume All</button>
+                        <button class="btn btn-danger" onclick="stopAllScans()">⏹️ Stop All</button>
+                    <div class="card">
+                        <h3 id="scanStatusTitle" style="margin-bottom: 1.5rem;">📊 Live Scan Status (no scans)</h3>
+                        
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+                            <label class="scan-dropdown-label" for="scanSelector">Select Active Scan:</label>
+                            <select id="scanSelector" onchange="onScanDropdownChange()" style="flex: 1; min-width: 300px;">
+                                <option value="no-scans">No active scans</option>
+                            </select>
+                            <button class="btn btn-secondary" onclick="updateScanStatus()" title="Refresh scan status">
+                                🔄 Refresh
+                            </button>
+                        </div>
+
+                        <!-- NEW: Individual Scan Control Buttons -->
+                        <div class="scan-control-buttons">
+                            <button class="btn-scan-control btn-pause" onclick="pauseSelectedScan()">
+                                ⏸️ Pause Selected Scan
+                            </button>
+                           <button class="btn-scan-control btn-resume" onclick="resumeSelectedScan()">
+                                ▶️ Resume Selected Scan
+                            </button>
+                            <button class="btn-scan-control btn-delete" onclick="deleteSelectedScan()">
+                                🗑️ Delete Selected Scan
+                            </button>
+                        </div>
+
+                        <div id="scanOutputContent">
+                            <div class="empty-state">
+                                <h4>🔍 No scan selected</h4>
+                                <p>Choose a scan from the dropdown above to view live output</p>
+                                <p><strong>Individual Control:</strong> Use pause and delete buttons to control the selected scan specifically.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enhanced Export Tab -->
+                <div id="exportTab" class="tab-content">
+                    <div class="export-card">
+                        <div class="export-header">
+                            💾 Export Enhanced Multi-Scan Results
+                        </div>
+                        <p style="margin-bottom: 2rem; color: #666;">
+                            Download all scan results with separate sections for each numbered scan instance
+                        </p>
+                        
+                        <div class="export-btns">
+                            <button class="export-btn" onclick="exportResults('zip')">
+                                📦 Export as ZIP
+                            </button>
+                            <button class="export-btn" onclick="exportResults('html')">
+                                🌐 Export Enhanced HTML
+                            </button>
+                            <button class="export-btn" onclick="exportResults('csv')">
+                                📊 Export as CSV
+                            </button>
+                            <button class="export-btn" onclick="exportResults('txt')">
+                                📄 Export as TXT
+                            </button>
+                        </div>
+                        
+                        <div class="export-note" id="exportNote">
+                            💡 <strong>Enhanced Export Features:</strong><br>
+                            • <strong>HTML:</strong> Separate sections for each scan with proper numbering<br>
+                            • <strong>ZIP:</strong> Organized folders by scan type and number<br>
+                            • <strong>CSV:</strong> Includes scan numbers and display names<br>
+                            • <strong>TXT:</strong> Grouped by scan type with individual scan sections
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3 style="margin-bottom: 1rem;">📋 Export Status & Information</h3>
+                        <div id="exportStatusInfo" class="export-note">
+                            Click any export button above to download your multi-scan results. All scan instances are preserved and exported separately.
+                        </div>
+                        <!--
+                        <div class="action-group" style="margin-top: 1rem;">
+                            <button class="btn btn-secondary" onclick="checkExportStatus()">
+                                📊 Check Export Status
+                            </button>-->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enhanced Copy Tab -->
+                <div id="copyTab" class="tab-content">
+                    <div class="card">
+                        <h3 style="margin-bottom: 1rem;">🔂 Copy Multi-Scan Results</h3>
+                       <span style="font-size: 0.8rem; color: #888; font-weight: normal;">
+                            Copy all scan results including numbered instances to a specified directory
+                            </span>
+                        </p>
+                        
+                        <div class="input-group">
+                            <label for="destPath">
+                                Destination Directory Path
+                                <span style="font-size: 0.8rem; color: #888; font-weight: normal;">
+                                    (Absolute path where all scan results should be copied)
+                                </span>
+                            </label>
+                            <input type="text" id="destPath" placeholder="/home/your_user/pentest_results" 
+                                   style="font-family: 'Courier New', monospace;">
+                        </div>
+                        
+                        <div class="action-group">
+                            <button class="btn btn-primary" onclick="copyResults()">
+                                📁 Copy All Results
+                            </button>
+                            <button class="btn btn-secondary" onclick="document.getElementById('destPath').value = ''">
+                                🧹 Clear Path
+                            </button>
+                        </div>
+                        
+
+                    </div>
+
+                    <div class="card">
+                        <h3 style="margin-bottom: 1rem;">💡 Copy Instructions</h3>
+                        <div class="copy-instructions">
+                            <div class="instruction-step">
+                                <h4>1️⃣ Get Destination Path</h4>
+                                <span style="font-size: 0.8rem; color: #888; font-weight: normal;">
+                                <p>Run this command in your target directory in Kali:</p></span>
+                                <div style="background: #3b82f6; padding: 10px; border-radius: 5px; font-family: monospace;">
+                                    <code>pwd</code>
+                                </div>
+                            </div>
+                            
+                            <div class="instruction-step">
+                                <h4>2️⃣ What Gets Copied</h4>
+                                <span style="font-size: 0.8rem; color: #888; font-weight: normal;">
+                                <ul style="margin: 10px 0; padding-left: 20px;">
+                                    <li> All numbered scan instances (HTTPx_1, HTTPx_2, etc.)</li>
+                                    <li>Individual scan output files with timestamps</li>
+                                    <li>Project configuration and target lists</li>
+                                    <li>Live scan outputs organized by type and number</li>
+                                    <li>Complete scan history - nothing is lost</li>
+                                </ul>
+                            </span>
+                            </div>
+                            
+                            <div class="instruction-step">
+                                <h4>3️⃣ Example Paths</h4>
+                                <div style="background: #3b82f6; padding: 7px; border-radius: 5px; font-size: 0.85rem;">
+                                    <strong>Kali:</strong> <code>/home/username/project_folder/client_assessment</code><br>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="export-note">
+                            ⚠️ <strong>Note:</strong> The copy operation preserves the complete multi-scan structure. 
+                            Each scan type will have numbered instances maintaining the scan history.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Create Project Modal -->
+    <div id="createProjectModal" class="modal">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 1.5rem;">📁 Create New Project</h3>
+            <form onsubmit="event.preventDefault(); createProject();" id="createProjectForm">
+                <div class="input-group">
+                    <label for="projectName">Project Name</label>
+                    <input type="text" id="projectName" name="projectName" required 
+                           placeholder="my-pentest-project" 
+                           pattern="[A-Za-z0-9_-]+" 
+                           title="Only letters, numbers, underscores and hyphens allowed">
+                </div>
+                <div class="input-group">
+                    <label for="projectDescription">Description (Optional)</label>
+                    <textarea id="projectDescription" name="projectDescription" 
+                              placeholder="Brief description of your penetration testing project..."></textarea>
+                </div>
+                <div class="action-group">
+                    <button type="submit" class="btn btn-success">✅ Create Project</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeCreateProject()">❌ Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="/static/main_enhanced.js"></script>
+    
+    <!-- Additional helper functions -->
+    <script>
+        // Function to delete current project
+        async function deleteCurrentProject() {
+            if (!currentProjectId) {
+                showNotification('No project selected', 'error');
+                return;
+            }
+            
+            if (!confirm(`Are you sure you want to delete "${currentProjectName}"? This action cannot be undone.`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/projects/${currentProjectId}`, {
+                    method: 'DELETE'
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    showNotification('Project deleted successfully!', 'success');
+                    showDashboard();
+                    loadProjects();
+                } else {
+                    showNotification('Failed to delete project: ' + data.error, 'error');
+                }
+            } catch (error) {
+                showNotification('Network error: ' + error.message, 'error');
+            }
+        }
+
+        // Enhanced start all scans
+        async function startAllScans() {
+            if (!currentProjectId) {
+                showNotification('No project selected', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/projects/${currentProjectId}/scans/start-all`, {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    showNotification('All scans started successfully!', 'success');
+                    updateScanStatus();
+                } else {
+                    showNotification('Failed to start scans: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showNotification('Network error: ' + error.message, 'error');
+            }
+        }
+
+        // Enhanced pause all scans
+        async function pauseAllScans() {
+            if (!currentProjectId) return;
+            
+            try {
+                const response = await fetch(`/api/projects/${currentProjectId}/scans/pause-all`, {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    showNotification('All scans paused!', 'success');
+                    updateScanStatus();
+                } else {
+                    showNotification('Failed to pause scans: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showNotification('Network error: ' + error.message, 'error');
+            }
+        }
+
+        // Enhanced resume all scans
+        async function resumeAllScans() {
+            if (!currentProjectId) return;
+            
+            try {
+                const response = await fetch(`/api/projects/${currentProjectId}/scans/resume-all`, {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    showNotification('All scans resumed!', 'success');
+                    updateScanStatus();
+                } else {
+                    showNotification('Failed to resume scans: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showNotification('Network error: ' + error.message, 'error');
+            }
+        }
+
+        // Initialize enhanced features
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🛡️ NetworkPT Enhanced v2.0 - All Features Loaded:');
+            console.log('✅ Individual scan controls (pause/delete selected)');
+            console.log('✅ Live project dashboard with scan status');
+            console.log('✅ Blue, white, orange color scheme');
+            console.log('✅ Increased font sizes');
+            console.log('✅ Copy results activation on live tab');
+            
+            // Auto-update dashboard when on dashboard view
+            setInterval(() => {
+                if (document.getElementById('dashboardView').style.display !== 'none') {
+                    updateDashboardStatus();
+                }
+            }, 8000); // Update every 8 seconds for dashboard
+        });
+    </script>
+</body>
+</html>
